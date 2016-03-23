@@ -5,6 +5,7 @@
 var querystring = require('querystring');
 var path = require('path');
 var crypto = require('crypto');
+var fs = require('fs');
 
 module.exports = function(source) {
   this.cacheable();
@@ -21,7 +22,10 @@ module.exports = function(source) {
 function getDirectoryName(context) {
   var query = context.query.slice(1) || 'tempdir=./csstemp'
 
-  return querystring.parse(query).tempdir;
+  return path.join(
+    context.options.output.path,
+    querystring.parse(query).tempdir
+  )
 }
 
 // Extract the <style></style> content from the specified source
@@ -32,10 +36,22 @@ function extractCSS(source, tempDir, context) {
   if (parts.length == 2) {
     var end = parts[1].split('</style>', 2);
     var fileName = cssFileName(context);
+    var filePath = path.join(tempDir, fileName);
 
-    context.emitFile(path.join(tempDir, fileName), end[0]);
+    function writeFile() {
+      fs.writeFileSync(filePath, end[0]);
+    }
 
-    return parts[0] + 'require("' + fileName + '")' + end[1];
+    try {
+      writeFile();
+    } catch (ex) {
+      fs.mkdirSync(tempDir);
+      writeFile();
+    }
+
+    var requirePath = path.relative(path.dirname(context.resourcePath), filePath);
+
+    return parts[0] + 'require("' + requirePath + '")' + end[1];
   }
 
   return source;
