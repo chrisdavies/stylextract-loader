@@ -1,0 +1,32 @@
+{
+  "name": "stylextract-loader",
+  "version": "0.0.1",
+  "description": "A WebPack loader that lets you put CSS in your JSX files",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisdavies/stylextract-loader.git"
+  },
+  "keywords": [
+    "webpack",
+    "css",
+    "jsx",
+    "react"
+  ],
+  "author": "Chris Davies <ferociousturtle@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chrisdavies/stylextract-loader/issues"
+  },
+  "homepage": "https://github.com/chrisdavies/stylextract-loader#readme",
+  "devDependencies": {
+    "jasmine": "^2.4.1",
+    "proxyquire": "^1.7.4"
+  },
+  "dependencies": {
+    "rimraf": "^2.5.2"
+  }
+}
