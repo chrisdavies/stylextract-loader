@@ -1,6 +1,6 @@
 {
   "name": "stylextract-loader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A WebPack loader that lets you put CSS in your JSX files",
   "main": "index.js",
   "scripts": {
