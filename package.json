@@ -23,10 +23,6 @@
   },
   "homepage": "https://github.com/chrisdavies/stylextract-loader#readme",
   "devDependencies": {
-    "jasmine": "^2.4.1",
-    "proxyquire": "^1.7.4"
-  },
-  "dependencies": {
-    "rimraf": "^2.5.2"
+    "jasmine": "^2.4.1"
   }
 }

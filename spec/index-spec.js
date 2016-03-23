@@ -1,72 +1,55 @@
-var proxyquire =  require('proxyquire');
-var fs = MockFs();
-var rimraf = MockRimraf();
-var extract = proxyquire('../index', {
-  'fs': fs,
-  'rimraf': rimraf
-});
 
-var simpleStyle = '<style>.hello {background: red }</style>';
+var extract = require('../index');
+var simpleStyle = 'Prefix:<style>.hello {background: red}</style>-Suffix';
+var simpleContent = '.hello {background: red}';
 
 describe('stylextract-loader', function () {
-  beforeEach(function() {
-    fs.clear();
-    rimraf.clear();
+  it('Returns the file without the style', function () {
+    var pack = MockWebpack({resourcePath: 'hello.jsx'});
+    var result = pack.extract(simpleStyle);
+    expect(result).toBe('Prefix:require("hello.jsx.scss")-Suffix');
+  });
+
+  it('Is cacheable', function () {
+    var pack = MockWebpack();
+    pack.extract(simpleStyle);
+    expect(pack.cacheable).toHaveBeenCalled();
   });
 
   it('Uses the query string to determine temp dir', function () {
-    var pack = MockWebpack({query: '?tempdir=/baz/bar'});
+    var pack = MockWebpack({
+      query: '?tempdir=/baz/bar',
+      resourcePath: 'js/hello-world.jsx'
+    });
     pack.extract(simpleStyle);
-    expect(rimraf.state.dir).toBe('/baz/bar');
-    expect(fs.state.dir).toBe('/baz/bar');
+    expect(pack.emitFile)
+      .toHaveBeenCalledWith('/baz/bar/js-hello-world.jsx.scss', simpleContent);
   });
 
   it('Defaults temp folder to ./csstemp', function () {
-    var pack = MockWebpack({query: ''});
+    var pack = MockWebpack({
+      query: '',
+      resourcePath: 'a/b/c.jsx'
+    });
     pack.extract(simpleStyle);
-    expect(rimraf.state.dir).toBe('./csstemp');
-    expect(fs.state.dir).toBe('./csstemp');
+    expect(pack.emitFile)
+      .toHaveBeenCalledWith('csstemp/a-b-c.jsx.scss', simpleContent);
   });
 })
 
 function MockWebpack (opts) {
-  return {
+  opts = opts || {};
+
+  var mock = {
     query: opts.query || '',
     resourcePath: opts.resourcePath || 'scripts/test-file.jsx',
     cacheable: function () { },
+    emitFile: function (fileName, content) { },
     extract: extract
   }
-}
 
-function MockFs() {
-  return {
-    state: {},
+  spyOn(mock, 'emitFile');
+  spyOn(mock, 'cacheable');
 
-    clear: function () {
-      this.state = {};
-    },
-
-    mkdirSync: function (dir) {
-      this.state.dir = dir;
-    },
-
-    writeFileSync: function (filePath, fileContent) {
-      this.state.filePath = filePath;
-      this.state.fileContent = fileContent;
-    }
-  }
-}
-
-function MockRimraf () {
-  return {
-    state: {},
-
-    clear: function () {
-      this.state = {};
-    },
-
-    sync: function (dir) {
-      this.state.dir = dir;
-    }
-  }
+  return mock;
 }
