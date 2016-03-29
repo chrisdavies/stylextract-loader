@@ -1,6 +1,6 @@
 // Extract the first <style></style> element from the file being processed
 // and add it as an externally required CSS file.
-// How to keep the extracted CSS in memory rather than disk?
+// TODO: keep the extracted CSS in memory rather than disk
 
 var querystring = require('querystring');
 var path = require('path');

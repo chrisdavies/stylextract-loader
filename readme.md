@@ -8,9 +8,94 @@ but still benefitting from writing SCSS, using autoprefixer, etc.
 
 `npm install stylextract`
 
-## Usage
+## Usage without webpack CSS modules
 
-TODO...
+In any JSX file, you are allowed one and *only one* `<style>` element. It can
+go anywhere in the file you wish, but it's good to be consistent across your
+files for readability purposes. I tend to put my style tags last in the file.
+
+```jsx
+
+import React from 'react'
+
+export default function ({name}) {
+  return (
+    <h1 className="hello-header">{name}</h1>
+  )
+}
+
+<style>
+  .hello-header {
+    background: steelblue;
+    color: white;
+  }
+</style>
+
+```
+
+## Usage with webpack CSS modules
+
+Stylextract pairs nicely with webpack's CSS modules. Just assign the style
+tag to a const.
+
+```jsx
+
+import React from 'react'
+
+export default function ({name}) {
+  return (
+    <h1 className={css.helloHeader}>{name}</h1>
+  )
+}
+
+const css = <style>
+  .helloHeader {
+    background: steelblue;
+    color: white;
+  }
+</style>
+
+```
+
+## Configuration
+
+Here's a snippet from one project's `webpack.config.js` file. The key is that
+stylextract must run *before* Babel, as the `<style>` tag is invalid JSX and
+will break the build otherwise.
+
+```js
+config.module = {
+  loaders: [{
+    // JavaScript transpiling
+    test: /.jsx?$/,
+    exclude: /node_modules/,
+    loader: 'babel?' + JSON.stringify(babelSettings) + '!stylextract'
+  }, {
+    // SCSS support
+    test: /\.scss$/,
+    loader: ExtractTextPlugin.extract('css-loader?modules!sass')
+  }],
+};
+
+```
+
+### Changing the extraction directory
+
+By default stylextract extracts your inline styles into a file in the `csstemp`
+directory beneath your project's output directory. You can configure the name
+of the css output directory using the `tempdir` option:
+
+`stylextract?tempdir=./my-fanci-dir`
+
+## Limitations
+
+As mentioned above, stylextract allows only one `<style>` tag per JSX file.
+It will simply extract the first and ignore subsequent occurrences. This
+limitation has its upsides.
+
+Every time I've wanted more than one style tag, it's been a sign of code-smell
+in my component. The correct solution was to break my component down into
+sub-components.
 
 ## License MIT
 
