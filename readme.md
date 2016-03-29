@@ -4,6 +4,8 @@ A simple WebPack loader that extracts a `<style></style>` element into its
 own CSS file. Useful for putting component-specific CSS into your JSX files,
 but still benefitting from writing SCSS, using autoprefixer, etc.
 
+[![Build Status](https://travis-ci.org/chrisdavies/stylextract-loader.svg?branch=master)](https://travis-ci.org/chrisdavies/stylextract-loader)
+
 ## Installation
 
 `npm install stylextract`
