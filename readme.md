@@ -8,7 +8,7 @@ but still benefitting from writing SCSS, using autoprefixer, etc.
 
 ## Installation
 
-`npm install stylextract`
+`npm install stylextract-loader`
 
 ## Usage without webpack CSS modules
 
